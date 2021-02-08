@@ -6,7 +6,14 @@ def read_input(path: str):
     >>> read_input("check.txt")
     ['***21**', '452453*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***']
     """
-    pass
+    with open(path, 'r') as pole:
+        lines = pole.readlines()
+        pole_list = []
+        for i in lines:
+            if i[-1] == '\n':
+                i = i[:-1]
+            pole_list.append(i)
+    return pole_list
 
 
 def left_to_right_check(input_line: str, pivot: int):
