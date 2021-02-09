@@ -4,7 +4,7 @@ def read_input(path: str):
     Return list of str.
 
     >>> read_input("check.txt")
-    ['***21**', '452453*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***']
+    ['***21**', '412453*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***']
     """
     with open(path, 'r') as pole:
         lines = pole.readlines()
@@ -46,7 +46,11 @@ def check_not_finished_board(board: list):
     >>> check_not_finished_board(['***21**', '412453*', '423145*', '*5?3215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    for i in board:
+        if '?' in i:
+            return False
+            break
+    return True
 
 
 def check_uniqueness_in_rows(board: list):
@@ -62,7 +66,14 @@ def check_uniqueness_in_rows(board: list):
     >>> check_uniqueness_in_rows(['***21**', '412453*', '423145*', '*553215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    board = board[1:-1]
+    for i in board:
+        i = i[1:-1]
+        for j in i:
+            i = i[1:]
+            if j in i:
+                return False
+    return True
 
 
 def check_horizontal_visibility(board: list):
@@ -80,7 +91,33 @@ def check_horizontal_visibility(board: list):
     >>> check_horizontal_visibility(['***21**', '452413*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    board = board[1:-1]
+    for i in board:
+        left = i[0]
+        right = i[-1]
+        i = i[1:-1]
+        if left != '*':
+            el = int(i[0])
+            wise = 1
+            for j in i[1:]:
+                if int(j) > el:
+                    el = int(j)
+                    wise += 1
+            if wise != int(left):
+                return False
+        if right != '*':
+            wise = 1
+            i = ''.join(reversed(i))
+            el = int(i[0])
+            for j in i[1:]:
+                if int(j) > el:
+                    el = int(j)
+                    wise += 1
+            if wise != int(right):
+                return False
+    return True
+
+
 
 
 def check_columns(board: list):
@@ -96,7 +133,16 @@ def check_columns(board: list):
     >>> check_columns(['***21**', '412553*', '423145*', '*543215', '*35214*', '*41532*', '*2*1***'])
     False
     """
-    pass
+    new_board = []
+    for i in range(len(board)):
+        new_board.append('')
+    for i in board:
+        for j in range(len(i)):
+            new_board[j] = i[j] + new_board[j]
+    wise = check_horizontal_visibility(new_board)
+    unity = check_uniqueness_in_rows(new_board)
+    return wise and unity
+
 
 
 def check_skyscrapers(input_path: str):
@@ -108,7 +154,14 @@ def check_skyscrapers(input_path: str):
     >>> check_skyscrapers("check.txt")
     True
     """
-    pass
+    board = read_input(input_path)
+    if not check_not_finished_board(board):
+        return False
+    wise_row = check_horizontal_visibility(board)
+    unity_row = check_uniqueness_in_rows(board)
+    row = wise_row and unity_row
+    col = check_columns(board)
+    return row and col
 
 
 if __name__ == "__main__":
